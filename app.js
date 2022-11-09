@@ -37,3 +37,4 @@ app.use(cookieParser());
 app.listen(process.env.PORT|| 5000,()=>{
     console.log("backend is running");
 })
+app.get("/",(req,res)=>res.send("Hello"));
