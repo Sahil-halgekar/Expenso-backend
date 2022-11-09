@@ -34,6 +34,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 
-app.listen("https://expenso-backend-mv6t99s5c-sahil-halgekar.vercel.app/" || 5000,()=>{
+app.listen(process.env.PORT|| 5000,()=>{
     console.log("backend is running");
 })
