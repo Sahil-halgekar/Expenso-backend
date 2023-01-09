@@ -27,7 +27,7 @@ const groupSchema = new Schema({
   },
 });
 
-// Make group members as friends
+// Add group members as friends
 groupSchema.pre('findOneAndUpdate', async function (doc, next) {
   try {
     const { members } = this.getUpdate();
