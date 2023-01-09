@@ -34,23 +34,6 @@ groupSchema.pre('save', async function (next) {
     next(createError.BadRequest('JoinLink was not created'));
   }
 });
-
-// Delete archives related to this group when deleting it
-groupSchema.pre('findOneAndDelete', async function (next) {
-  try {
-    const groupId = this.getQuery()['_id'];
-    const expenses = await Expense.find({ group: groupId });
-    const expensesIds = expenses.map((expense) => {
-      return expense._id;
-    });
-    await Comment.deleteMany({ expense: { $in: expensesIds } });
-    await Expense.deleteMany({ group: groupId });
-    next();
-  } catch (err) {
-    next(createError.BadRequest('Group was not deleted'));
-  }
-});
-
 // Make group members as friends
 groupSchema.pre('findOneAndUpdate', async function (doc, next) {
   try {
@@ -71,26 +54,6 @@ groupSchema.pre('findOneAndUpdate', async function (doc, next) {
     next(createError.InternalServerError('Error in updating users friends'));
   }
 });
-
-// For seeding
-groupSchema.post('save', async function (doc, next) {
-  try {
-    const groupMembers = doc.members;
-    for (let member of groupMembers) {
-      const newFriends = groupMembers.filter((m) => {
-        return !m.equals(member);
-      });
-
-      await User.findByIdAndUpdate(member, {
-        $addToSet: { friends: newFriends },
-      });
-    }
-  } catch (err) {
-    console.log(err);
-    next(createError.InternalServerError('Error in updating users friends'));
-  }
-});
-
 const Group = model('Group', groupSchema);
 
 module.exports = Group;
