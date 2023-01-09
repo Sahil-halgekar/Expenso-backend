@@ -27,14 +27,6 @@ const groupSchema = new Schema({
   },
 });
 
-groupSchema.pre('save', async function (next) {
-  try {
-    this.joinLink = `${process.env.ORIGIN}/join/${this._id.toString()}`;
-  } catch (err) {
-    next(createError.BadRequest('JoinLink was not created'));
-  }
-});
-
 // Make group members as friends
 groupSchema.pre('findOneAndUpdate', async function (doc, next) {
   try {
