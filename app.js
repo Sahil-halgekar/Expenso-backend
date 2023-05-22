@@ -13,14 +13,13 @@ app.use(express.json());
 const MONGO_URI =process.env.DB;
 
 const connectDB = async function () {
-  try {
-    const x = await mongoose.connect(MONGO_URI);
-    console.log(
-      `Connected to Mongo! Database name: "${x.connections[0].name}"`
-    );
-  } catch (err) {
-    console.error('Error connecting to mongo: ', err);
-  }
+  mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(console.log("Connected to MongoDB"))
+  .catch((err) => console.log(err));
 };
 
 connectDB();

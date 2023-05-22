@@ -1,6 +1,6 @@
 const User = require('../models/User.model');
 
-exports.getUserInfo = async (req, res, next) => {
+exports.getUserInfo = async (req, res) => {
   try {
     const userInfo = await User.findById(req.payload._id)
       .select({
@@ -15,6 +15,6 @@ exports.getUserInfo = async (req, res, next) => {
     }
     res.status(200).json({ userInfo });
   } catch (err) {
-    next(createError.InternalServerError(err.name + ': ' + err.message));
+    return res.status(400).json(err);
   }
 };

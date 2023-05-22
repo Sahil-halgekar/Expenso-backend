@@ -1,7 +1,7 @@
 const { isValidId } = require('../helpers/isValidId');
 
 exports.idValidation = async (req, res, next) => {
-  const { groupId, expenseId, commentId } = req.params;
+  const { groupId, expenseId} = req.params;
 
   if (groupId) {
     if (!isValidId(groupId)) {
@@ -18,14 +18,5 @@ exports.idValidation = async (req, res, next) => {
         .json({ errorMessage: 'Sorry, this route does not exist' });
     }
   }
-
-  if (commentId) {
-    if (!isValidId(commentId)) {
-      return res
-        .status(404)
-        .json({ errorMessage: 'Sorry, this route does not exist' });
-    }
-  }
-
   next();
 };

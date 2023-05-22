@@ -2,7 +2,7 @@ const { Schema, model } = require('mongoose');
 const createError = require('http-errors');
 const User = require('./User.model');
 const Expense = require('./Expense.model');
-const Comment = require('./Comment.model');
+
 const { currency_codes } = require('../helpers/currencies');
 require('dotenv/config');
 

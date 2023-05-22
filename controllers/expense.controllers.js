@@ -3,8 +3,7 @@ const createError = require('http-errors');
 const Expense = require('../models/Expense.model');
 const { validateExpense } = require('../helpers/validateExpense');
 
-// Controller : get expenses for a specific group
-exports.getExpenses = async (req, res, next) => {
+exports.getExpenses = async (req, res) => {
   try {
     const { groupId } = req.params;
     const expenses = await Expense.find({ group: groupId })
@@ -16,16 +15,13 @@ exports.getExpenses = async (req, res, next) => {
     return res.status(200).json({ expenses });
 
   } catch (err) {
-    next(createError.InternalServerError(err.name + ' : ' + err.message));
+    return res.status(400).json(err);
   }
 };
 
-// Controller : create expense and shares
-exports.createExpense = async (req, res, next) => {
+exports.createExpense = async (req, res) => {
   try {
     const { groupId } = req.params;
-
-    // Definition of validation schema
     const schema = Joi.object({
       title: Joi.string().trim().required().max(50),
       paid_by: Joi.required(),
@@ -35,10 +31,8 @@ exports.createExpense = async (req, res, next) => {
       date: Joi.date().required(),
     });
 
-    // Get validation result
     const validationResult = await schema.validateAsync(req.body);
 
-    // Check if total shares equals the expense amount
     const { shares, expense_amount } = validationResult;
 
     if (!validateExpense(expense_amount, shares)) {
@@ -47,25 +41,23 @@ exports.createExpense = async (req, res, next) => {
         .json({ errorMessage: 'Total shares must add up to expense amount' });
     }
 
-    // Create expense
+
     const createdExpense = await Expense.create({
       ...validationResult,
       group: groupId,
     });
-
-    // Return error if expense was not created
     if (!createdExpense) {
       return res.status(400).json({ errorMessage: 'Expense was not created' });
     }
 
     return res.status(201).json({ createdExpense });
   } catch (err) {
-    next(createError.InternalServerError(err.name + ' : ' + err.message));
+    return res.status(400).json(err);
   }
 };
 
 // Controller : delete expense
-exports.deleteExpense = async (req, res, next) => {
+exports.deleteExpense = async (req, res) => {
   const { expenseId } = req.params;
   try {
     const deletedExpense = await Expense.findOneAndDelete({ _id: expenseId });
@@ -74,12 +66,11 @@ exports.deleteExpense = async (req, res, next) => {
     }
     return res.status(200).json({ deletedExpense });
   } catch (err) {
-    next(createError.InternalServerError(err.name + ' : ' + err.message));
+    return res.status(400).json(err);
   }
 };
 
-// Controller : get expense by id
-exports.getExpenseById = async (req, res, next) => {
+exports.getExpenseById = async (req, res) => {
   try {
     const { expenseId } = req.params;
     const expense = await Expense.findById(expenseId)
@@ -101,12 +92,10 @@ exports.getExpenseById = async (req, res, next) => {
 
     return res.status(200).json({ expense });
   } catch (err) {
-    next(createError.InternalServerError(err.name + ' : ' + err.message));
+    return res.status(400).json(err);
   }
 };
-
-// Controller : update expense
-exports.updateExpense = async (req, res, next) => {
+exports.updateExpense = async (req, res) => {
   try {
     const { expenseId } = req.params;
 
@@ -119,10 +108,7 @@ exports.updateExpense = async (req, res, next) => {
       date: Joi.date(),
     });
 
-    // Get validation result
     const validationResult = await schema.validateAsync(req.body);
-
-    // Check if total shares equals the expense amount
     const { shares, expense_amount } = validationResult;
     const totalShares = shares.reduce((a, b) => a + b.share_amount, 0);
     if (totalShares !== expense_amount) {
@@ -130,8 +116,6 @@ exports.updateExpense = async (req, res, next) => {
         .status(403)
         .json({ errorMessage: 'Total shares must add up to expense amount' });
     }
-
-    // Update expense
     const updatedExpense = await Expense.findByIdAndUpdate(
       expenseId,
       {
@@ -148,6 +132,6 @@ exports.updateExpense = async (req, res, next) => {
 
     return res.status(200).json({ updatedExpense });
   } catch (err) {
-    next(createError.InternalServerError(err.name + ' : ' + err.message));
+    return res.status(400).json(err);
   }
 };
