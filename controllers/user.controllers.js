@@ -7,9 +7,8 @@ exports.getUserInfo = async (req, res) => {
         firstName: 1,
         lastName: 1,
         email: 1,
-        friends: 1,
       })
-      .populate('friends', '_id firstName lastName email');
+      .populate('_id firstName lastName email');
     if (!userInfo) {
       return res.status(404).json({ errorMessage: 'User info not found' });
     }

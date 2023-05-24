@@ -2,8 +2,6 @@ const { toTwoDecimals } = require('./toTwoDecimals');
 
 exports.computeReimbursements = (balances) => {
   const reimbursements = [];
-
-  // Create a deep copy of group stats in order update the stats overs interations without changing the original stats
   const currentBalances = JSON.parse(
     JSON.stringify(
       balances.map((e) => {

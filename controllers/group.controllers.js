@@ -12,12 +12,7 @@ exports.getGroups = async (req, res) => {
   try {
     const { _id: userId } = req.payload;
 
-    let groups = await Group.find({ members: userId }).populate(
-      'members',
-      '-password'
-    );
-
-
+    let groups = await Group.find({ members: userId })
     if (!groups) {
       return res.status(404).json({ errorMessage: 'Groups not found' });
     }
@@ -76,7 +71,6 @@ exports.getGroupById = async (req, res) => {
     const group = await Group.findById(groupId)
       .populate('members', '-password')
       .populate('owner', '-password');
-
     if (!group) {
       return res.status(404).json({ errorMessage: 'Group not found' });
     }
@@ -99,7 +93,7 @@ exports.updateGroup = async (req, res) => {
     });
     const validationResult = await schema.validateAsync(req.body);
 
-    const groupMembers = [userId];
+    const groupMembers = [];
     const currentGroup = await Group.findById(groupId);
 
     if (validationResult.members) {
@@ -129,36 +123,11 @@ exports.updateGroup = async (req, res) => {
           }
         }
       }
-
-      const groupExpenses = await Expense.find({ group: groupId });
-      if (!groupMembers.includes(currentGroup.owner._id.toString())) {
-        return res.status(403).json({
-          errorMessage: `Can't remove the group owner from the members.`,
-        });
-      }
-      for (let member of currentGroup.members) {
-        if (!groupMembers.includes(member.toString())) {
-          const memberExpenses = groupExpenses.filter((exp) => {
-            return (
-              exp.paid_by.equals(member) ||
-              exp.shares.filter((share) => {
-                return share.shared_with.equals(member);
-              }).length !== 0
-            );
-          });
-          if (memberExpenses.length > 0) {
-            return res.status(403).json({
-              errorMessage: `Can't remove a member who was involved in at least one expense`,
-            });
-          }
-        }
-      }
     }
 
     const data = validationResult.members
       ? { ...validationResult, members: groupMembers }
       : { ...validationResult };
-
     const updatedGroup = await Group.findByIdAndUpdate(groupId, data, {
       new: true,
     })

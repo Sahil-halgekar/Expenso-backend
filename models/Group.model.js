@@ -27,26 +27,7 @@ const groupSchema = new Schema({
   },
 });
 
-// Add group members as friends
-groupSchema.pre('findOneAndUpdate', async function (doc, next) {
-  try {
-    const { members } = this.getUpdate();
-    if (members) {
-      for (let member of members) {
-        const newFriends = members.filter((m) => {
-          return m !== member;
-        });
 
-        await User.findByIdAndUpdate(member, {
-          $addToSet: { friends: newFriends },
-        });
-      }
-    }
-  } catch (err) {
-    console.log(err);
-    next(createError.InternalServerError('Error in updating users friends'));
-  }
-});
 
 
 

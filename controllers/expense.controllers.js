@@ -56,7 +56,6 @@ exports.createExpense = async (req, res) => {
   }
 };
 
-// Controller : delete expense
 exports.deleteExpense = async (req, res) => {
   const { expenseId } = req.params;
   try {

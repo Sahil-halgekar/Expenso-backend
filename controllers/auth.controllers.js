@@ -2,7 +2,7 @@ const User = require('../models/User.model');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const saltRounds = 12;
-const signupController = async (req, res, next) => {
+const signupController = async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
 
@@ -57,7 +57,7 @@ const signupController = async (req, res, next) => {
       });
     }
   } catch (err) {
-    next(err);
+    return res.status(400).json(err);
   }
 };
 const updateController=async (req,res,next)=>{

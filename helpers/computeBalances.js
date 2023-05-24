@@ -14,8 +14,6 @@ exports.computeBalances = async (groupId) => {
   if (!group) {
     return null;
   }
-
-  // Total owed by user
   const owedByMember = await Expense.aggregate([
     { $match: { group: mongoose.Types.ObjectId(groupId) } },
     { $unwind: `$shares` },
@@ -33,8 +31,6 @@ exports.computeBalances = async (groupId) => {
       },
     },
   ]);
-
-  // Total paid by user
   const paidByMember = await Expense.aggregate([
     { $match: { group: mongoose.Types.ObjectId(groupId) } },
     {
@@ -44,8 +40,6 @@ exports.computeBalances = async (groupId) => {
       },
     },
   ]);
-
-  // Compute balances
   const balances = [];
   for (member of group.members) {
     const totalPaid = paidByMember.find((e) => {

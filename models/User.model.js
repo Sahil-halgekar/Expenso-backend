@@ -15,13 +15,6 @@ const userSchema = new Schema(
       required: true,
       unique: true,
     },
-    friends: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        default: [],
-      },
-    ],
     password: {
       type: String,
       required: true,
