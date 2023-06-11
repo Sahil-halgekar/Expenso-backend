@@ -18,7 +18,7 @@ const groupSchema = new Schema({
   currency: {
     type: String,
     enum: currency_codes,
-    default: 'EUR',
+    default: 'INR',
     required: true,
   },
   members: {
